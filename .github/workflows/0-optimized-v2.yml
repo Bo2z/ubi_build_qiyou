@@ -11,7 +11,7 @@ on:
         description: "编译设备型号"
         required: true
         type: choice
-        default: "all"
+        default: "QLB-4Pro"
         options:
           - "cudy-tr3000-512M"
           - "QLB-4Pro"
@@ -58,7 +58,7 @@ on:
         description: "发布到 GitHub Release"
         required: false
         type: boolean
-        default: true
+        default: false
 
       prerelease:
         description: "预发布版本"
