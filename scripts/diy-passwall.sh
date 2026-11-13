@@ -4,8 +4,8 @@
 # Run from the workflow after the OpenWrt source tree has been prepared, before make defconfig.
 set -Eeuo pipefail
 
-PASSWALL_VERSION="26.10.16"
-PASSWALL_RELEASE="26.10.16-2"
+PASSWALL_VERSION="26.11.11"
+PASSWALL_RELEASE="26.11.11-1"
 PASSWALL_IPK_URL="https://github.com/Openwrt-Passwall/openwrt-passwall/releases/download/${PASSWALL_RELEASE}/22.03-_luci-app-passwall_${PASSWALL_VERSION}_all.ipk"
 PASSWALL_ZH_URL="https://github.com/Openwrt-Passwall/openwrt-passwall/releases/download/${PASSWALL_RELEASE}/23.05-24.10_luci-i18n-passwall-zh-cn_${PASSWALL_VERSION}_all.ipk"
 
