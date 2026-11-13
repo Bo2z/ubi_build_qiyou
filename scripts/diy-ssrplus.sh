@@ -5,7 +5,7 @@
 # before `make defconfig`.
 set -Eeuo pipefail
 
-RELEASE="v196.19"
+RELEASE="v198.3"
 ARCH="aarch64_cortex-a53" # fixed target architecture
 OPENWRT_DIR="${OPENWRT_DIR:-$PWD}"
 
