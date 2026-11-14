@@ -43,7 +43,7 @@ on:
         description: "自选主题"
         required: true
         type: choice
-        default: "aurora"
+        default: "liquid"
         options:
           - "liquid"
           - "aurora"
