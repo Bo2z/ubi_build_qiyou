@@ -47,7 +47,7 @@ on:
         options:
           - "liquid"
           - "aurora"
-        
+
       plugin_scripts:
         description: "自选插件脚本，多个用英文逗号分隔；留空则不执行"
         required: false
@@ -76,20 +76,16 @@ env:
   TZ: Asia/Shanghai
 
   DEVICE_INPUT: ${{ github.event.inputs.device || github.event.client_payload.device || 'all' }}
-  
+
   THEME_INPUT: ${{ github.event.inputs.plugin_theme || github.event.client_payload.plugin_theme || 'aurora' }}
-  
+
   PLUGIN_SCRIPTS: ${{ github.event.inputs.plugin_scripts || github.event.client_payload.plugin_scripts || '' }}
-  
+
   REPO_URL: ${{ github.event.inputs.repo || github.event.client_payload.repo || 'https://github.com/padavanonly/immortalwrt-mt798x-6.6.git' }}
 
   REPO_BRANCH: ${{ github.event.inputs.branch || github.event.client_payload.branch || 'openwrt-24.10-6.6' }}
 
   REPO_COMMIT: ${{ github.event.inputs.commit || github.event.client_payload.commit || '' }}
-
-  UPLOAD_RELEASE: ${{ github.event.inputs.release || github.event.client_payload.release || 'true' }}
-
-  PRERELEASE: ${{ github.event.inputs.prerelease || github.event.client_payload.prerelease || 'false' }}
 
   CCACHE_DIR: /workdir/.ccache
   CCACHE_MAXSIZE: 6G
@@ -97,10 +93,9 @@ env:
   OPENWRT_DIR: /workdir/openwrt
 
 
-# ============================================================
+# ==============================================================
 # 生成 Matrix
-# ============================================================
-
+# ==============================================================
 jobs:
 
   prepare:
@@ -145,10 +140,11 @@ jobs:
             mt7986-other)
               MATRIX='["mt7986-other"]'
               ;;
-              
+
             ikuai-q6000-emmc)
               MATRIX='["ikuai-q6000-emmc"]'
               ;;
+
             all)
               MATRIX='["cudy-tr3000-512M","QLB-4Pro","ikuai-q6000-nand","ikuai-q6000-emmc","mt7981-other","mt7986-other"]'
               ;;
@@ -165,13 +161,17 @@ jobs:
           PRERELEASE_INPUT="${{ github.event.inputs.prerelease }}"
           PRERELEASE_PAYLOAD="${{ github.event.client_payload.prerelease }}"
 
-          if [ "$RELEASE_INPUT" = "false" ] ||              [ "$RELEASE_PAYLOAD" = "false" ] ||              [ "$RELEASE_PAYLOAD" = "False" ]; then
+          if [ "$RELEASE_INPUT" = "false" ] || \
+             [ "$RELEASE_PAYLOAD" = "false" ] || \
+             [ "$RELEASE_PAYLOAD" = "False" ]; then
             UPLOAD_RELEASE="false"
           else
             UPLOAD_RELEASE="true"
           fi
 
-          if [ "$PRERELEASE_INPUT" = "true" ] ||              [ "$PRERELEASE_PAYLOAD" = "true" ] ||              [ "$PRERELEASE_PAYLOAD" = "True" ]; then
+          if [ "$PRERELEASE_INPUT" = "true" ] || \
+             [ "$PRERELEASE_PAYLOAD" = "true" ] || \
+             [ "$PRERELEASE_PAYLOAD" = "True" ]; then
             PRERELEASE="true"
           else
             PRERELEASE="false"
@@ -190,10 +190,10 @@ jobs:
           echo "$MATRIX"
 
 
-# ============================================================
+# ==============================================================
 # Matrix 编译
 # 每个设备都是完全独立的 Job
-# ============================================================
+# ==============================================================
 
   build:
     name: "🔨 Build ${{ matrix.device }}"
@@ -219,24 +219,18 @@ jobs:
 
     steps:
 
-      # ======================================================
+      # ==============================================================
       # Checkout 当前仓库
-      # ======================================================
+      # ==============================================================
 
       - name: Checkout Builder Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
 
-      # ======================================================
-      # 初始化编译环境
-      # ======================================================
-   
-      - uses: SerhiiK/gha-cleaner@v1.0
-        with:
-          remove-browsers: "true"
-          remove-languages: "true"
-          remove-tools: "true" 
-          
+      # ==============================================================
+      # 初始化编译环境（移除耗时的 gha-cleaner 与 apt-get upgrade）
+      # ==============================================================
+
       - name: Init Build Environment
         shell: bash
         env:
@@ -253,11 +247,12 @@ jobs:
             /etc/apt/sources.list.d/* \
             /usr/share/dotnet \
             /usr/local/lib/android \
-            /opt/ghc
-            
+            /opt/ghc \
+            /opt/hostedtoolcache
+
           sudo -E apt-get update -y
-          sudo -E apt-get upgrade -y
-          sudo -E apt-get install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+          sudo -E apt-get install -y --no-install-recommends \
+            ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
             bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
             g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
             libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev \
@@ -265,7 +260,7 @@ jobs:
             ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
             python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
             upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
-          
+
           sudo apt-get clean
 
           sudo timedatectl set-timezone "$TZ"
@@ -277,9 +272,9 @@ jobs:
             /workdir
 
 
-      # ======================================================
+      # ==============================================================
       # 显示设备
-      # ======================================================
+      # ==============================================================
 
       - name: Show Build Information
         shell: bash
@@ -304,10 +299,10 @@ jobs:
           echo "${REPO_COMMIT:-latest}"
 
 
-      # ======================================================
+      # ==============================================================
       # Clone ImmortalWrt
       # 每个 Matrix Job 自己独立 Clone
-      # ======================================================
+      # ==============================================================
 
       - name: Clone ImmortalWrt
         working-directory: /workdir
@@ -359,9 +354,9 @@ jobs:
           git rev-parse --short HEAD
 
 
-      # ======================================================
+      # ==============================================================
       # 拷贝 DIY 文件
-      # ======================================================
+      # ==============================================================
 
       - name: Prepare Custom Files
         shell: bash
@@ -374,8 +369,6 @@ jobs:
           echo "Copy custom scripts"
           echo "========================================"
 
-          #cp -f "$GITHUB_WORKSPACE"/*.sh ./
-
           if [ -d "$GITHUB_WORKSPACE/dts" ]; then
             cp -f \
               "$GITHUB_WORKSPACE"/dts/* \
@@ -385,19 +378,13 @@ jobs:
           chmod +x "$GITHUB_WORKSPACE"/devices/*.sh
 
           echo
-          echo "Custom files:"
-          ls -lah \
-            diy-*.sh \
-            2>/dev/null || true
+          echo "Device DIY scripts:"
+          ls -lah "$GITHUB_WORKSPACE"/devices/*.sh 2>/dev/null || true
 
 
-      # ======================================================
+      # ==============================================================
       # 设备专用 DIY
-      #
-      # 注意：
-      # 这里绝对不能再把多个设备 DIY 连续执行。
-      # 每个 Matrix Job 只处理一个设备。
-      # ======================================================
+      # ==============================================================
 
       - name: Apply Device DIY
         shell: bash
@@ -430,38 +417,39 @@ jobs:
             mt7981-other)
               echo "mt7981-other"
               ;;
-              
+
             mt7986-other)
               echo "mt7986-other"
               ;;
-              
+
             ikuai-q6000-emmc)
               echo "Apply ikuai-q6000-emmc"
               "$GITHUB_WORKSPACE"/devices/diy-ikuai-q6000-emmc.sh
               ;;
+
             *)
               echo "ERROR: Unknown device: $DEVICE"
               exit 1
               ;;
 
           esac
-          
+
           WIFI_FILE="./package/mtk/applications/mtwifi-cfg/files/mtwifi.sh"
           WRT_SSID="$DEVICE"
           WRT_WORD="12345678"
           if [ -f "$WIFI_FILE" ]; then
-          	#修改WIFI名称
-          	sed -i "s/ImmortalWrt/$WRT_SSID/g" $WIFI_FILE
-          	#修改WIFI加密
-          	sed -i "s/encryption=.*/encryption='psk2+ccmp'/g" $WIFI_FILE
-          	#修改WIFI密码
-          	sed -i "/set wireless.default_\${dev}.encryption='psk2+ccmp'/a \\\t\t\t\t\t\set wireless.default_\${dev}.key='$WRT_WORD'" $WIFI_FILE
+            #修改WIFI名称
+            sed -i "s/ImmortalWrt/$WRT_SSID/g" "$WIFI_FILE"
+            #修改WIFI加密
+            sed -i "s/encryption=.*/encryption='psk2+ccmp'/g" "$WIFI_FILE"
+            #修改WIFI密码
+            sed -i "/set wireless.default_\${dev}.encryption='psk2+ccmp'/a \\\t\t\t\t\tset wireless.default_\${dev}.key='$WRT_WORD'" "$WIFI_FILE"
           fi
 
 
-      # ======================================================
+      # ==============================================================
       # 选择对应 Config
-      # ======================================================
+      # ==============================================================
 
       - name: Load Device Config
         shell: bash
@@ -491,10 +479,11 @@ jobs:
             mt7986-other)
               CONFIG="$GITHUB_WORKSPACE/config/mt7986-other.config"
               ;;
-              
+
             ikuai-q6000-emmc)
               CONFIG="$GITHUB_WORKSPACE/config/mt7986-ikuai-q6000-emmc.config"
               ;;
+
             *)
               echo "ERROR: Unknown device: $DEVICE"
               exit 1
@@ -526,22 +515,20 @@ jobs:
           cp -f "$CONFIG" .config
 
 
-
-      # ======================================================
+      # ==============================================================
       # 选择对应 Theme
-      # ======================================================
+      # ==============================================================
 
       - name: Load Theme
         shell: bash
         env:
-          SELECTED_PLUGIN_THEME: ${{env.THEME_INPUT}}
+          SELECTED_PLUGIN_THEME: ${{ env.THEME_INPUT }}
         run: |
           set -euo pipefail
-          
-          THEME_PATH="$GITHUB_WORKSPACE/theme/"
+
           echo "$SELECTED_PLUGIN_THEME"
           cd "$OPENWRT_DIR"
-          
+
           case "$SELECTED_PLUGIN_THEME" in
 
             liquid)
@@ -555,19 +542,20 @@ jobs:
               ;;
 
             *)
-              echo "ERROR: Unknown theme: $THEME_SH"
+              echo "ERROR: Unknown theme: $SELECTED_PLUGIN_THEME"
               exit 1
               ;;
           esac
-          echo 
+
+          echo
           chmod +x "$THEME_SH"
           "$THEME_SH"
 
 
-      # ======================================================
+      # ==============================================================
       # 自选插件脚本
       # 执行位置：Load Device Config 之后、make defconfig 之前
-      # ======================================================
+      # ==============================================================
 
       - name: Run Selected Plugin Scripts
         if: ${{ env.PLUGIN_SCRIPTS != '' }}
@@ -589,13 +577,10 @@ jobs:
             <<< "$SELECTED_PLUGIN_SCRIPTS"
 
           for script in "${SELECTED_SCRIPTS[@]}"; do
-            # 去掉文件名两侧空格
             script="$(echo "$script" | xargs)"
 
-            # 忽略空项目
             [ -z "$script" ] && continue
 
-            # 只允许填写文件名，禁止路径穿越
             if [[ "$script" != *.sh || "$script" == */* || "$script" == *..* ]]; then
               echo "ERROR: Invalid script name: $script"
               exit 1
@@ -622,10 +607,10 @@ jobs:
           echo
           echo "All selected plugin scripts completed."
 
-          
-      # ======================================================
+
+      # ==============================================================
       # Defconfig
-      # ======================================================
+      # ==============================================================
 
       - name: Generate Final Config
         id: config
@@ -644,12 +629,11 @@ jobs:
 
           # 临时解决Rust问题
           sed -i 's/ci-llvm=true/ci-llvm=false/g' feeds/packages/lang/rust/Makefile
-          
-          make defconfig 
-          
-          # && make -j$(nproc) V=s
-          
-          # make defconfig 2026-10-18 17:52:21修
+
+          # 开启 OpenWrt 原生 ccache 支持，让交叉编译工具链也走缓存
+          echo 'CONFIG_CCACHE=y' >> .config
+
+          make defconfig
 
           CONFIG_HASH="$(md5sum .config | awk '{print $1}')"
 
@@ -677,31 +661,25 @@ jobs:
             | grep '=y' \
             || true
 
-      # ======================================================
-      # Ccache
-      # ======================================================
+
+      # ==============================================================
+      # Ccache（单行 Key，修复多余空格导致 restore-keys 前缀不匹配）
+      # ==============================================================
 
       - name: Cache Ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /workdir/.ccache
-
-          key: >-
-            ${{ runner.os }}-ccache-
-            ${{ env.REPO_BRANCH }}-
-            ${{ matrix.device }}-
-            ${{ steps.config.outputs.hash }}-
-            ${{ hashFiles('diy-*.sh', 'config/*.config', 'dts/*') }}
-
+          key: ${{ runner.os }}-ccache-${{ env.REPO_BRANCH }}-${{ matrix.device }}-${{ steps.config.outputs.hash }}-${{ hashFiles('devices/*.sh', 'theme/*.sh', 'scripts/*.sh', 'config/*.config', 'dts/*') }}
           restore-keys: |
             ${{ runner.os }}-ccache-${{ env.REPO_BRANCH }}-${{ matrix.device }}-
             ${{ runner.os }}-ccache-${{ env.REPO_BRANCH }}-
             ${{ runner.os }}-ccache-
 
 
-      # ======================================================
+      # ==============================================================
       # OpenWrt DL Cache
-      # ======================================================
+      # ==============================================================
 
       - name: Calculate Feeds Cache Key
         id: feeds
@@ -721,23 +699,18 @@ jobs:
           echo "Feeds hash: $FEEDS_HASH"
 
       - name: Cache OpenWrt DL
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /workdir/openwrt/dl
-
-          key: >-
-            ${{ runner.os }}-openwrt-dl-
-            ${{ env.REPO_BRANCH }}-
-            ${{ steps.feeds.outputs.hash }}
-
+          key: ${{ runner.os }}-openwrt-dl-${{ env.REPO_BRANCH }}-${{ steps.feeds.outputs.hash }}
           restore-keys: |
             ${{ runner.os }}-openwrt-dl-${{ env.REPO_BRANCH }}-
             ${{ runner.os }}-openwrt-dl-
 
 
-      # ======================================================
+      # ==============================================================
       # Configure Ccache
-      # ======================================================
+      # ==============================================================
 
       - name: Configure Ccache
         shell: bash
@@ -754,14 +727,13 @@ jobs:
           echo "========================================"
           echo "CCACHE"
           echo "========================================"
-
           ccache -p
           ccache -s
 
 
-      # ======================================================
+      # ==============================================================
       # Download Source
-      # ======================================================
+      # ==============================================================
 
       - name: Download Sources
         shell: bash
@@ -783,9 +755,9 @@ jobs:
             || true
 
 
-      # ======================================================
+      # ==============================================================
       # 编译
-      # ======================================================
+      # ==============================================================
 
       - name: Compile Firmware
         id: compile
@@ -841,7 +813,7 @@ jobs:
             echo "========================================"
 
             make \
-              -j$(nproc) \
+              -j1 \
               V=s \
               CC="ccache gcc" \
               CXX="ccache g++"
@@ -851,9 +823,9 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
 
-      # ======================================================
+      # ==============================================================
       # 显示编译结果
-      # ======================================================
+      # ==============================================================
 
       - name: Show Firmware Files
         if: steps.compile.outputs.status == 'success'
@@ -884,9 +856,9 @@ jobs:
             | sort
 
 
-      # ======================================================
+      # ==============================================================
       # 整理 Firmware
-      # ======================================================
+      # ==============================================================
 
       - name: Collect Firmware
         if: steps.compile.outputs.status == 'success'
@@ -933,13 +905,13 @@ jobs:
             | sort
 
 
-      # ======================================================
+      # ==============================================================
       # 上传 Artifact
-      # ======================================================
+      # ==============================================================
 
       - name: Upload Firmware Artifact
         if: steps.compile.outputs.status == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ImmortalWrt-${{ matrix.device }}
           path: ${{ github.workspace }}/firmware/${{ matrix.device }}/
@@ -948,9 +920,9 @@ jobs:
           retention-days: 7
 
 
-      # ======================================================
+      # ==============================================================
       # 上传编译日志 / Config
-      # ======================================================
+      # ==============================================================
 
       - name: Collect Build Information
         if: always()
@@ -997,7 +969,7 @@ jobs:
 
       - name: Upload Build Information
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: BuildInfo-${{ matrix.device }}
           path: ${{ github.workspace }}/build-info/
@@ -1005,9 +977,9 @@ jobs:
           retention-days: 7
 
 
-      # ======================================================
+      # ==============================================================
       # Ccache Statistics
-      # ======================================================
+      # ==============================================================
 
       - name: Ccache Statistics
         if: always()
@@ -1016,9 +988,9 @@ jobs:
           ccache -s || true
 
 
-# ============================================================
+# ==============================================================
 # 汇总 / Release
-# ============================================================
+# ==============================================================
   release:
     name: "📦 Release Firmware"
 
@@ -1038,21 +1010,21 @@ jobs:
 
     steps:
 
-      # ======================================================
+      # ==============================================================
       # 下载所有 Matrix Artifact
-      # ======================================================
+      # ==============================================================
 
       - name: Download Firmware Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           pattern: ImmortalWrt-*
           path: release
           merge-multiple: false
 
 
-      # ======================================================
+      # ==============================================================
       # 检查 Firmware
-      # ======================================================
+      # ==============================================================
 
       - name: Check Firmware
         shell: bash
@@ -1079,12 +1051,9 @@ jobs:
           fi
 
 
-      # ======================================================
+      # ==============================================================
       # 整理 Release Assets
-      #
-      # Matrix 设备会产生同名公共文件，例如 Packages.gz
-      # 和 mt798*-ram-*-bl2.bin。它们不应直接全部上传。
-      # ======================================================
+      # ==============================================================
 
       - name: Prepare Release Assets
         shell: bash
@@ -1151,9 +1120,10 @@ jobs:
           echo "========================================"
           find release-assets -type f -printf '%f\n' | sort
 
-      # ======================================================
+
+      # ==============================================================
       # 生成 Release 信息
-      # ======================================================
+      # ==============================================================
 
       - name: Generate Release Metadata
         id: release
@@ -1182,36 +1152,36 @@ jobs:
           - ${{ env.THEME_INPUT }}
 
           EOF
-          
+
           if [ -n "${{ env.PLUGIN_SCRIPTS }}" ]; then
             cat >> release.md <<EOF
           ### Script
           - ${{ env.PLUGIN_SCRIPTS }}
-          
+
           EOF
           fi
-          
+
           cat >> release.md <<'EOF'
 
-          
+
           ### Build Architecture
 
           Each device is compiled in an independent GitHub Actions Matrix Job.
 
           This prevents cross-device contamination of:
 
-          - \`.config\`
-          - \`build_dir\`
-          - \`staging_dir\`
+          - `.config`
+          - `build_dir`
+          - `staging_dir`
           - kernel build artifacts
           - target image artifacts
-          
+
           ### Firmware Basic Information
-          
+
           Web address:192.168.6.1
-          
+
           wifi password:12345678
-          
+
           EOF
 
           echo "========================================"
@@ -1220,12 +1190,12 @@ jobs:
           echo "========================================"
 
 
-      # ======================================================
+      # ==============================================================
       # 创建 Release
-      # ======================================================
+      # ==============================================================
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.release.outputs.tag }}
           name: "ImmortalWrt ${{ steps.release.outputs.tag }}"
@@ -1239,16 +1209,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-# ============================================================
+# ==============================================================
 # 清理旧 Workflow
-# ============================================================
+# ==============================================================
 
   cleanup-runs:
     name: "🧹 Cleanup Old Workflow Runs"
 
     permissions:
       actions: write
-
 
     needs:
       - build
@@ -1270,16 +1239,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-# ============================================================
+# ==============================================================
 # 清理旧 Release
-# ============================================================
+# ==============================================================
 
   cleanup-releases:
     name: "🧹 Cleanup Old Releases"
 
     permissions:
       contents: write
-
 
     needs:
       - prepare
