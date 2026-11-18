@@ -43,7 +43,7 @@
 | `cudy-tr3000-512M` | `config/mt7981-cudy-tr3000-512m.config` |
 | `cudy-tr3000-256M` | `config/mt7981-cudy-tr3000-256m.config` |
 | `cudy-tr3000-128M` | `config/mt7981-cudy-tr3000-128m.config` |
-| `QLB-4Pro` | `config/mt7981-QLB-4Pro.config` |
+| `OLBOX-4Pro` | `config/mt7981-OLBOX-4Pro.config` |
 | `ikuai-q6000-nand` | `config/mt7986-ikuai-q6000-nand.config` |
 | `all` | 为上述设备创建 Matrix 构建任务 |
 

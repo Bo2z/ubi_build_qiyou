@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # https://github.com/P3TERX/Actions-OpenWrt
-# File name: diy-qlb.sh
+# File name: diy-olbox.sh
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 # Copyright (c) 2019-2024 P3TERX <https://p3terx.com>
@@ -37,14 +37,14 @@ sed -i -e '/^IMG_PREFIX:=/i BUILD_DATE := $(shell date +%Y%m%d)' \
 #cp target/linux/mediatek/dts/mt7981b-cudy-tr3000-v1.dtsi target/linux/mediatek/dts/mt7981b-cudy-tr3000-512mb-v1.dtsi
 
 #sed -i 's|reg = <0x5c0000 0x4000000>;|reg = <0x5c0000 0x1FA40000>;|' target/linux/mediatek/dts/mt7981b-cudy-tr3000-512mb-v1.dts
-sed -i '/bt,r320|\\/a\\'$'\t''QLB,4Pro|\\' target/linux/mediatek/filogic/base-files/etc/board.d/02_network
+sed -i '/bt,r320|\\/a\\'$'\t''OLBOX,4Pro|\\' target/linux/mediatek/filogic/base-files/etc/board.d/02_network
 
-grep -q "define Device/QLB-4Pro" target/linux/mediatek/image/filogic.mk || sed -i '/TARGET_DEVICES += cudy_wbr3000uax-v1-ubootmod/ a \
-define Device/QLB-4Pro\
-  DEVICE_VENDOR := QLB\
+grep -q "define Device/OLBOX-4Pro" target/linux/mediatek/image/filogic.mk || sed -i '/TARGET_DEVICES += cudy_wbr3000uax-v1-ubootmod/ a \
+define Device/OLBOX-4Pro\
+  DEVICE_VENDOR := OLBOX\
   DEVICE_MODEL := 4Pro\
   DEVICE_VARIANT := v1\
-  DEVICE_DTS := mt7981b-QLB-4Pro\
+  DEVICE_DTS := mt7981b-OLBOX-4Pro\
   DEVICE_DTS_DIR := ../dts\
   SUPPORTED_DEVICES += 256MB\
   BLOCKSIZE := 128k\
@@ -55,5 +55,5 @@ define Device/QLB-4Pro\
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata\
   DEVICE_PACKAGES := kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3\
 endef\
-TARGET_DEVICES += QLB-4Pro\
+TARGET_DEVICES += OLBOX-4Pro\
 ' target/linux/mediatek/image/filogic.mk

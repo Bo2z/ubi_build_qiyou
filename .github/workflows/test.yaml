@@ -11,10 +11,10 @@ on:
         description: "编译设备型号"
         required: true
         type: choice
-        default: "QLB-4Pro"
+        default: "OLBOX-4Pro"
         options:
           - "cudy-tr3000-512M"
-          - "QLB-4Pro"
+          - "OLBOX-4Pro"
           - "ikuai-q6000-nand"
           - "ikuai-q6000-emmc"
           - "mt7981-other"
@@ -125,8 +125,8 @@ jobs:
               MATRIX='["cudy-tr3000-512M"]'
               ;;
 
-            QLB-4Pro)
-              MATRIX='["QLB-4Pro"]'
+            OLBOX-4Pro)
+              MATRIX='["OLBOX-4Pro"]'
               ;;
 
             ikuai-q6000-nand)
@@ -146,7 +146,7 @@ jobs:
               ;;
 
             all)
-              MATRIX='["cudy-tr3000-512M","QLB-4Pro","ikuai-q6000-nand","ikuai-q6000-emmc","mt7981-other","mt7986-other"]'
+              MATRIX='["cudy-tr3000-512M","OLBOX-4Pro","ikuai-q6000-nand","ikuai-q6000-emmc","mt7981-other","mt7986-other"]'
               ;;
 
             *)
@@ -404,9 +404,9 @@ jobs:
               "$GITHUB_WORKSPACE"/devices/diy-cudy-tr3000-512MB.sh
               ;;
 
-            QLB-4Pro)
-              echo "Apply QLB-4Pro"
-              "$GITHUB_WORKSPACE"/devices/diy-qlb-4pro.sh
+            OLBOX-4Pro)
+              echo "Apply OLBOX-4Pro"
+              "$GITHUB_WORKSPACE"/devices/diy-OLBOX-4pro.sh
               ;;
 
             ikuai-q6000-nand)
@@ -464,8 +464,8 @@ jobs:
               CONFIG="$GITHUB_WORKSPACE/config/mt7981-cudy-tr3000-512m.config"
               ;;
 
-            QLB-4Pro)
-              CONFIG="$GITHUB_WORKSPACE/config/mt7981-QLB-4Pro.config"
+            OLBOX-4Pro)
+              CONFIG="$GITHUB_WORKSPACE/config/mt7981-OLBOX-4Pro.config"
               ;;
 
             ikuai-q6000-nand)
