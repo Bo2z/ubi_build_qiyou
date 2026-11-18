@@ -40,7 +40,7 @@ sed -i -e '/^IMG_PREFIX:=/i BUILD_DATE := $(shell date +%Y%m%d)' \
 sed -i '/bt,r320|\\/a\\'$'\t''olbox,4pro|\\' target/linux/mediatek/filogic/base-files/etc/board.d/02_network
 
 grep -q "define Device/olbox-4pro" target/linux/mediatek/image/filogic.mk || sed -i '/TARGET_DEVICES += cudy_wbr3000uax-v1-ubootmod/ a \
-define Device/olbox-4Pro\
+define Device/olbox-4pro\
   DEVICE_VENDOR := OLBOX\
   DEVICE_MODEL := 4Pro\
   DEVICE_VARIANT := v1\
