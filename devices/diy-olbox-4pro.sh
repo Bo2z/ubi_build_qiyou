@@ -49,7 +49,7 @@ define Device/olbox-4pro\
   SUPPORTED_DEVICES += 256MB\
   BLOCKSIZE := 128k\
   PAGESIZE := 2048\
-  IMAGE_SIZE := 240128k\
+  IMAGE_SIZE := 239104k\
   KERNEL_IN_UBI := 1\
   IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)\
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata\
