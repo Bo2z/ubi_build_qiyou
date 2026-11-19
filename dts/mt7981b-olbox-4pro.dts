@@ -130,7 +130,7 @@
 			#size-cells = <1>;
 
 			partition@0 {
-				label = "bl2";
+				label = "BL2";
 				reg = <0x00000 0x100000>;
 				read-only;
 			};
@@ -166,16 +166,21 @@
 			};
 
 			partition@380000 {
-				label = "fip";
+				label = "FIP";
 				reg = <0x380000 0x200000>;
 				read-only;
 			};
+
+			partition@580000{
+                label = "Config";
+                reg = <0x580000 0x100000>;
+            };
 
 			ubi: partition@580000 {
 				label = "ubi";
 				/* 256 MiB 片: NMBM 管理区从 block 1920 (0xf000000) 起,
 				 * 可见容量 240 MiB, 故 ubi 结束地址正好 0xf000000 */
-				reg = <0x0580000 0xea80000>; /* 234.5 MiB = 240128 KiB */
+				reg = <0x0680000 0xe980000>; /* 233.5 MiB = 239104 KiB */
 			};
 		};
 	};
