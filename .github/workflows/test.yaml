@@ -959,7 +959,7 @@ jobs:
           if [ -f "$OPENWRT_DIR/.config" ]; then
             cp \
               "$OPENWRT_DIR/.config" \
-              "$INFO/.config"
+              "$INFO/final.config"
           fi
 
           ccache -s \
