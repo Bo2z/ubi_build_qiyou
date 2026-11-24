@@ -8,7 +8,7 @@
 #include "mt7981.dtsi"
 
 / {
-	model = "OLBOX-4Pro";
+	model = "OLBOX-4PRO";
 	compatible = "olbox,4pro", "mediatek,mt7981", "mediatek,mt7981-rfb";
 
 	aliases {
